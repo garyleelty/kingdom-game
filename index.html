@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>边塞王国 · Kingdom Game</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <h1>👑 边塞王国</h1>
+  <div id="turn-box">
+    <span id="turn-label">第 1 / 30 季</span>
+    <span id="threat-label" title="下季马匪威胁值，防御=城墙×15+军队×1.2"></span>
+    <button id="btn-end-turn" class="primary">结束本季 ▶</button>
+    <button id="btn-restart">重开</button>
+  </div>
+</header>
+
+<main>
+  <!-- 左：资源与王国状态 -->
+  <section id="panel-state">
+    <h2>王国状况</h2>
+    <div class="res-grid">
+      <div class="res"><span class="ico">🪙</span><div><b id="r-gold">0</b><small>金币</small></div></div>
+      <div class="res"><span class="ico">🌾</span><div><b id="r-food">0</b><small>粮食</small></div></div>
+      <div class="res"><span class="ico">🪵</span><div><b id="r-wood">0</b><small>木材</small></div></div>
+      <div class="res"><span class="ico">🪨</span><div><b id="r-stone">0</b><small>石料</small></div></div>
+      <div class="res"><span class="ico">👥</span><div><b id="r-pop">0</b><small>人口 / 上限</small></div></div>
+      <div class="res"><span class="ico">⚔️</span><div><b id="r-army">0</b><small>军队</small></div></div>
+      <div class="res"><span class="ico">🛡️</span><div><b id="r-def">0</b><small>总防御</small></div></div>
+      <div class="res"><span class="ico">💰</span><div><b id="r-net">0</b><small>季净收支(金/粮)</small></div></div>
+    </div>
+    <div class="meter-block">
+      <label>忠诚 <b id="loyalty-val">60</b>/100</label>
+      <div class="meter"><div id="loyalty-bar"></div></div>
+      <small id="loyalty-hint"></small>
+    </div>
+    <div class="tax-block">
+      <label>税制：</label>
+      <div id="tax-btns"></div>
+      <small id="tax-hint"></small>
+    </div>
+    <div class="action-block">
+      <button id="btn-feast" title="50金币 → 忠诚+10">🎉 庆典 (50🪙→忠诚+10)</button>
+      <button id="btn-recruit" title="30金币 → 军队+5">🏺 募兵 (30🪙→军+5)</button>
+    </div>
+    <div id="trade-block">
+      <h3>🏪 集市 <small id="trade-left"></small></h3>
+      <div id="trade-btns"></div>
+      <small>买：木3🪙/石4🪙/粮2🪙 每单位 · 卖：木2🪙/石2🪙/粮1🪙 · 每季3单</small>
+    </div>
+    <div id="event-box" class="hidden">
+      <h3>本季事件</h3>
+      <p id="event-text"></p>
+      <p id="event-extra" class="extra"></p>
+    </div>
+    <p class="goal-hint">🎯 目标：30 季内建成<b>王座奇观</b>（350🪙 120🪵 120🪨）即胜；人口或忠诚归零、或期限已至奇观未成，王朝覆灭。</p>
+  </section>
+
+  <!-- 中：建造 -->
+  <section id="panel-build">
+    <h2>营建（点击建造）</h2>
+    <div id="build-list"></div>
+  </section>
+
+  <!-- 右：日志 -->
+  <section id="panel-log">
+    <h2>史记</h2>
+    <ul id="log-list"></ul>
+  </section>
+</main>
+
+<div id="overlay" class="hidden">
+  <div id="overlay-card">
+    <h2 id="overlay-title"></h2>
+    <p id="overlay-reason"></p>
+    <button id="overlay-again" class="primary">再开一局</button>
+  </div>
+</div>
+
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
