@@ -39,6 +39,8 @@ const CARDS = {
   yaoyan:      { name:"妖眼",     type:"power",  cost:2, tier:"upgrade", revealIntent:true },
   jingang:     { name:"金刚身",   type:"power",  cost:3, tier:"upgrade", onEnemyTurn:{reduceDmg:1} },
   dazhao:      { name:"大招强化", type:"power",  cost:3, tier:"upgrade", global:{ultDmg:+6} },
+  // ---- 万兽牌：气势拉满触发一剑霜寒 + 当回合格挡 ----
+  wanshou:     { name:"万兽牌",   type:"skill",  cost:3, tier:"upgrade", qish:6, block:5 },
 };
 
 const ENEMIES = {

@@ -2,9 +2,9 @@
 const assert = require("assert");
 const { CARDS, ENEMIES, ELITES, BOSS, RELICS, EVENTS } = require("../js/cards.js");
 
-assert.strictEqual(Object.keys(CARDS).length, 32, "应正好 32 张卡");
+assert.strictEqual(Object.keys(CARDS).length, 33, "应正好 33 张卡");
 assert.strictEqual(Object.values(CARDS).filter(c => c.tier === "base").length, 12, "基础 12 张");
-assert.strictEqual(Object.values(CARDS).filter(c => c.tier === "upgrade").length, 20, "升级 20 张");
+assert.strictEqual(Object.values(CARDS).filter(c => c.tier === "upgrade").length, 21, "升级 21 张");
 assert.strictEqual(Object.keys(ENEMIES).length, 8, "普通敌人 8 种");
 assert.strictEqual(Object.keys(ELITES).length, 2, "精英 2 种");
 assert.ok(BOSS, "应有最终 Boss");

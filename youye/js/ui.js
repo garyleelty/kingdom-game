@@ -300,7 +300,7 @@ function flash(msg) {
   }
 }
 
-global.YOUYE_UI = { init, render, newGame };
+global.YOUYE_UI = { init, render, newGame, _get: () => run, _set: (r) => { run = r; render(); } };
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
