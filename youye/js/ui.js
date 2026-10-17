@@ -199,6 +199,61 @@ function renderPlayed(b) {
   }
 }
 
+/** 打出卡牌后的动态特效 */
+function playFx(b, cardId, ehpBefore, qishBefore) {
+  const card = CARDS[cardId];
+  if (!card) return;
+  const layer = $("fx-layer");
+  if (!layer) return;
+  // 获取敌人位置作为特效中心
+  const enemyEl = $("enemy-card");
+  const rect = enemyEl ? enemyEl.getBoundingClientRect() : { left: 300, top: 150, width: 200, height: 80 };
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  // 1) 同名牌连发爆发
+  if (card.bond && b.bonded.includes(cardId)) {
+    const burst = document.createElement("div");
+    burst.className = "fx-bond";
+    burst.style.left = cx + "px";
+    burst.style.top = cy + "px";
+    layer.appendChild(burst);
+    setTimeout(() => burst.remove(), 1000);
+    const flash = document.createElement("div");
+    flash.className = "fx-flash";
+    layer.appendChild(flash);
+    setTimeout(() => flash.remove(), 600);
+  }
+
+  // 2) 大招触发（气势归零且打出气势牌/攻击牌触发）
+  if (qishBefore < b.qishCap && b.qish === 0 && (card.qish || card.type === "attack") && !(card.bond && b.bonded.includes(cardId))) {
+    // 判断是否真触发大招：本回合 qish 曾达到上限
+    if (b.log.some(l => l.includes("一剑霜寒"))) {
+      spawnDmg(layer, cx, cy, "一剑霜寒!", "ult");
+    }
+  }
+
+  // 3) 伤害数字
+  const dmgDealt = ehpBefore - b.enemyHp;
+  if (dmgDealt > 0) {
+    const isBond = card.bond && b.bonded.includes(cardId);
+    spawnDmg(layer, cx, cy, `-${dmgDealt}`, isBond ? "bond" : "dmg");
+    // 敌人震动
+    const ec = $("enemy-card");
+    if (ec) { ec.classList.remove("fx-shake"); void ec.offsetWidth; ec.classList.add("fx-shake"); setTimeout(() => ec.classList.remove("fx-shake"), 400); }
+  }
+}
+
+function spawnDmg(layer, x, y, text, kind) {
+  const d = document.createElement("div");
+  d.className = "fx-dmg " + (kind || "");
+  d.textContent = text;
+  d.style.left = x + "px";
+  d.style.top = y + "px";
+  layer.appendChild(d);
+  setTimeout(() => d.remove(), 1600);
+}
+
 function renderHand(b) {
   const hand = $("hand");
   hand.innerHTML = "";
@@ -221,8 +276,11 @@ function renderHand(b) {
     }
     if (b.status === "playing") {
       div.onclick = () => {
+        const ehpBefore = b.enemyHp;
+        const qishBefore = b.qish;
         const res = E.playCard(b, cardId);
-        if (!res.ok) flash(res.why);
+        if (!res.ok) { flash(res.why); render(); return; }
+        playFx(b, cardId, ehpBefore, qishBefore);
         render();
       };
     }
