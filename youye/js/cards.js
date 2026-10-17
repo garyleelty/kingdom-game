@@ -42,29 +42,29 @@ const CARDS = {
 };
 
 const ENEMIES = {
-  youhun:  { name:"游魂",  hp:22, intents:[{dmg:6},{dmg:4,drawSelf:1},{heal:3}] },
-  yaohou:  { name:"妖猴",  hp:26, intents:[{dmg:7},{dmg:5,stealQi:1}] },
-  zhiyuan: { name:"纸鸢妖",hp:24, intents:[{block:4},{dmg:5,blockSelf:3}] },
-  shigui:  { name:"石鬼",  hp:34, intents:[{dmg:8},{block:6},{dmg:11,charge:true}] },
-  yexiao:  { name:"夜枭",  hp:28, intents:[{dmg:5,hits:2},{dmg:7,stealQish:2}] },
-  shenv:   { name:"蛇女",  hp:30, intents:[{dmg:6,poison:3},{block:3,drawSelf:1},{dmg:9}] },
-  jingyao: { name:"镜妖",  hp:26, intents:[{mirror:true},{dmg:6},{block:5}] },
-  baigu:   { name:"白骨",  hp:32, intents:[{dmg:7,lifesteal:true},{dmg:5,hits:2},{revive:1}] },
+  youhun:  { name:"游魂",  hp:35, intents:[{dmg:8},{dmg:6,drawSelf:1},{heal:5}] },
+  yaohou:  { name:"妖猴",  hp:40, intents:[{dmg:9},{dmg:7,stealQi:1}] },
+  zhiyuan: { name:"纸鸢妖",hp:38, intents:[{block:6},{dmg:7,blockSelf:4}] },
+  shigui:  { name:"石鬼",  hp:52, intents:[{dmg:11},{block:8},{dmg:14,charge:true}] },
+  yexiao:  { name:"夜枭",  hp:42, intents:[{dmg:7,hits:2},{dmg:9,stealQish:3}] },
+  shenv:   { name:"蛇女",  hp:46, intents:[{dmg:8,poison:4},{block:5,drawSelf:1},{dmg:12}] },
+  jingyao: { name:"镜妖",  hp:40, intents:[{mirror:true},{dmg:8},{block:7}] },
+  baigu:   { name:"白骨",  hp:48, intents:[{dmg:9,lifesteal:true},{dmg:7,hits:2},{revive:1}] },
 };
 
 const ELITES = {
-  shanxiao: { name:"山魈",   hp:52, mechanic:"rageEvery4", mechanicDmg:+3, belowPct:0.30, belowDmg:12 },
-  shenlou:  { name:"蜃楼主", hp:50, mechanic:"copyLastCard", belowPct:0.40, doubleIntent:true },
+  shanxiao: { name:"山魈",   hp:65, mechanic:"rageEvery4", mechanicDmg:+3, belowPct:0.30, belowDmg:14 },
+  shenlou:  { name:"蜃楼主", hp:62, mechanic:"copyLastCard", belowPct:0.40, doubleIntent:true },
 };
 
 const BOSS = {
   name:"妖王·夜叉",
-  phase1:{ hp:90,
-    intents:[{dmg:9},{dmg:7,drawSelf:2},{block:8,stealQish:3}],
-    everyNTurn:3, specialDmg:14 },
+  phase1:{ hp:110,
+    intents:[{dmg:10},{dmg:8,drawSelf:2},{block:9,stealQish:3}],
+    everyNTurn:3, specialDmg:16 },
   phase2:{ pct:0.45,
-    intents:[{dmg:12},{dmg:5,hits:3},{block:10,clearQish:true}],
-    everyNTurn:2, specialDmg:18 },
+    intents:[{dmg:14},{dmg:6,hits:3},{block:11,clearQish:true}],
+    everyNTurn:2, specialDmg:20 },
 };
 
 const RELICS = {

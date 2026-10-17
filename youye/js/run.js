@@ -167,7 +167,7 @@ function endBattle(r, battle) {
     r.battleCount++;
     const isElite = node && node.type === "elite";
     const isBoss = node && node.type === "boss";
-    r.gold += (isBoss ? 60 : isElite ? 30 : 10) + r.nodeIndex * 3;
+    r.gold += (isBoss ? 90 : isElite ? 45 : 20) + r.nodeIndex * 3;
     const pool = Object.keys(CARDS).filter(k => CARDS[k].tier === "upgrade");
     r.rewardCards = pickRandomN(r.rng, pool, 3);
     if (isElite || isBoss) {
