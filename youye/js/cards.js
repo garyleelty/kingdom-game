@@ -41,6 +41,9 @@ const CARDS = {
   dazhao:      { name:"大招强化", type:"power",  cost:3, tier:"upgrade", global:{ultDmg:+6} },
   // ---- 万兽牌：气势拉满触发一剑霜寒 + 当回合格挡 ----
   wanshou:     { name:"万兽牌",   type:"skill",  cost:3, tier:"upgrade", qish:6, block:5 },
+  // ---- 同名牌（Bond）：本回合打出第二张同名卡效果翻倍 ----
+  shouqun:     { name:"兽群",     type:"attack", cost:1, tier:"upgrade", dmg:4, bond:true },
+  lianbi:      { name:"连壁",     type:"skill",  cost:1, tier:"upgrade", block:4, bond:true },
 };
 
 const ENEMIES = {

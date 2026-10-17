@@ -121,6 +121,40 @@ button.primary { background: var(--zhu); }
 #end-panel { text-align: center; padding: 40px; }
 #end-title { border: none; font-size: 2.2em; }
 
+/* 本回合已打出 */
+#played-area {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 12px; padding: 10px 14px;
+  border-top: 1px dashed var(--ink-soft);
+  min-height: 150px;
+}
+#played-label { font-size: .8em; color: var(--ink-soft); writing-mode: vertical-rl; }
+#played-cards { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-start; }
+#played-cards .card { width: 76px; height: 108px; opacity: .85; cursor: default; pointer-events: none; }
+#played-cards .card:hover { transform: none; box-shadow: none; }
+#played-cards .card.bonded {
+  opacity: 1;
+  border-color: var(--qian);
+  box-shadow: 0 0 12px rgba(138,109,47,.55), inset 0 0 8px rgba(138,109,47,.25);
+  animation: bondGlow 1.6s ease-in-out infinite;
+}
+/* 同名牌之间的连接线 */
+#played-cards .bond-link {
+  align-self: center; width: 22px; height: 3px;
+  background: linear-gradient(90deg, var(--qian), transparent);
+  position: relative;
+}
+#played-cards .bond-link::after {
+  content: "🔗"; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%,-50%); font-size: .7em;
+}
+@keyframes bondGlow {
+  0%,100% { box-shadow: 0 0 8px rgba(138,109,47,.45), inset 0 0 6px rgba(138,109,47,.2); }
+  50% { box-shadow: 0 0 18px rgba(138,109,47,.75), inset 0 0 12px rgba(138,109,47,.35); }
+}
+#played-cards .card .desc { font-size: .6em; }
+#played-cards .card .name { font-size: .85em; }
+
 #map-actions { margin-top: 12px; }
 
 .hidden { display: none !important; }

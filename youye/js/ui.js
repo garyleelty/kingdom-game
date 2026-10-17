@@ -137,6 +137,7 @@ function renderBattle() {
   $("block-num").textContent = b.block;
   $("hp-battle-num").textContent = b.playerHp;
   renderHand(b);
+  renderPlayed(b);
   $("btn-end-turn").disabled = b.status !== "playing";
   $("btn-discard").disabled = b.status !== "playing" || b.discardUsed || b.hand.length === 0;
 }
@@ -147,6 +148,55 @@ function intentIcon(intent) {
   if (intent.heal) return `❤ ${intent.heal}`;
   if (intent.mirror) return "🔁 镜反";
   return "❔";
+}
+
+/** 本回合已打出区：同名牌连成一体（昆特 Bond 的增强视觉版） */
+function renderPlayed(b) {
+  const area = $("played-cards");
+  if (!area) return;
+  area.innerHTML = "";
+  const played = b.playedThisTurn || [];
+  if (!played.length) return;
+
+  // 按分组渲染：同名牌相邻，中间加连接线
+  const groups = [];
+  const countMap = {};
+  for (const c of played) {
+    countMap[c] = (countMap[c] || 0) + 1;
+    if (countMap[c] === 1) groups.push({ id: c, count: 1 });
+    else groups[groups.length - 1].count++;
+  }
+  for (let gi = 0; gi < groups.length; gi++) {
+    if (gi > 0) {
+      const link = document.createElement("div");
+      link.className = "bond-link";
+      area.appendChild(link);
+    }
+    const grp = groups[gi];
+    const isBonded = grp.count > 1;
+    for (let k = 0; k < grp.count; k++) {
+      const div = document.createElement("div");
+      const cardId = grp.id;
+      if (cardId === "__rest__") {
+        div.className = "card rest" + (isBonded ? " bonded" : "");
+        div.innerHTML = `<div class="cost">0</div><div class="name">调息</div><div class="desc">气势+1</div>`;
+      } else {
+        const card = CARDS[cardId];
+        if (!card) continue;
+        div.className = `card ${card.type}` + (isBonded ? " bonded" : "");
+        const typeLabel = { attack:"攻", skill:"技", power:"能" }[card.type];
+        const desc = cardDesc(card);
+        const doubled = isBonded ? "<div class='desc' style='color:var(--qian)'>×2 同名牌连发</div>" : "";
+        div.innerHTML = `
+          <div class="cost">${E.cardCost(b, cardId)}</div>
+          <div class="name">${card.name}</div>
+          <div class="desc">${desc}<br><small>${typeLabel}</small></div>
+          ${doubled}
+        `;
+      }
+      area.appendChild(div);
+    }
+  }
 }
 
 function renderHand(b) {

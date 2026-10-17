@@ -62,6 +62,10 @@ function newBattle(cfg) {
     hand: [],
     discard: [],
     powers: [],
+    // 本回合打出的牌（昆特同名牌 Bond 用）
+    playedThisTurn: [],
+    // bond 连牌标记：记录哪些卡已触发过 Bond（用于 UI 高亮）
+    bonded: [],
 
     enemy: { name:enemy.name, hp:enemy.hp, maxHp:enemy.hp, intents:enemy.intents, intent:0, phase:1 },
     enemyHp: enemy.hp,
@@ -155,9 +159,20 @@ function playCard(s, cardId) {
   s.energy -= cost;
   s.hand.splice(idx, 1);
 
+  // —— 同名牌（Bond）：本回合已打出过同名卡则效果翻倍 ——
+  let bondMult = 1;
+  let bondTriggered = false;
+  if (base.bond && s.playedThisTurn.includes(cardId)) {
+    bondMult = 2;
+    bondTriggered = true;
+    pushLog(s, `🔗 同名牌连发！【${base.name}】效果翻倍`);
+  }
+  s.playedThisTurn.push(cardId);
+  if (bondTriggered && !s.bonded.includes(cardId)) s.bonded.push(cardId);
+
   // 攻击牌
   if (base.type === "attack") {
-    let dmg = base.dmg || 0;
+    let dmg = (base.dmg || 0) * bondMult;
     // 破军之势全局 +2
     if (s.powers.includes("pojunshi")) dmg += 2;
     // 剑气纵横：若手牌全攻击牌再打一次
@@ -188,13 +203,13 @@ function playCard(s, cardId) {
   // 技能牌
   if (base.type === "skill") {
     if (base.block) {
-      let b = base.block;
+      let b = base.block * bondMult;
       if (s.relicEff.firstBlock && s.block === 0) b += s.relicEff.firstBlock;
       s.block += b;
       if (base.counter) s.enemyReduceDmg += base.counter;
     }
-    if (base.draw) drawPhase(s, base.draw);
-    if (base.qish) s.qish += base.qish;
+    if (base.draw) drawPhase(s, base.draw * bondMult);
+    if (base.qish) s.qish += base.qish * bondMult;
     if (base.discard) {
       for (let i = 0; i < base.discard && s.hand.length > 0; i++) s.discard.push(s.hand.pop());
     }
@@ -356,6 +371,8 @@ function endTurn(s) {
   s.block = 0;
   s.enemyBlock = 0; // 敌人格挡回合末清零
   s.discardUsed = false;
+  s.playedThisTurn = [];
+  s.bonded = [];
 
   // 能力牌 onTurnStart
   for (const p of s.powers) {
