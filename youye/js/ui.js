@@ -84,9 +84,22 @@ function renderTopbar() {
 
 const KIND_LABEL = { battle:"战斗", event:"异闻", elite:"精英", boss:"决战" };
 
+/** 当前该显示哪一屏。地图只是"还没进洞"时的那一屏。 */
+function eventNode() {
+  if (atFire || run.battle || run.status !== "playing") return null;
+  const node = run.map[run.nodeIndex];
+  if (!node || node.type !== "event" || node.done) return null;
+  return node;
+}
+function hasReward() {
+  return run.rewardCards.length > 0 || !!run.rewardRelic;
+}
+
 function renderMap() {
   const panel = $("map-panel");
-  if (atFire || run.battle || run.status !== "playing") { panel.classList.add("hidden"); return; }
+  if (atFire || run.battle || run.status !== "playing" || eventNode() || hasReward()) {
+    panel.classList.add("hidden"); return;
+  }
   panel.classList.remove("hidden");
 
   const nodes = $("map-nodes");
@@ -166,7 +179,6 @@ function renderMapRail() {
     log.appendChild(p);
   });
 }
-
 function mapSub(node) {
   if (!node) return "路已走完。";
   if (node.type === "boss") return "最后一段路。妖王在雾的最深处。";
@@ -461,17 +473,95 @@ function wash(layer) {
   setTimeout(() => d.remove(), 600);
 }
 
+/* ---------------- 侧栏小件 ---------------- */
+
+/** 侧栏里的一块键值表 */
+function railRows(el, title, rows) {
+  const sec = document.createElement("section");
+  sec.className = "block";
+  const h = document.createElement("h2");
+  h.className = "block-label";
+  h.textContent = title;
+  const dl = document.createElement("dl");
+  dl.className = "kv-list";
+  for (const r of rows) {
+    const row = document.createElement("div");
+    const dt = document.createElement("dt");
+    dt.textContent = r[0];
+    const dd = document.createElement("dd");
+    if (r[2]) {
+      const b = document.createElement("b");
+      b.textContent = r[1];
+      dd.appendChild(b);
+      const s = document.createElement("span");
+      s.className = "of";
+      s.textContent = r[2];
+      dd.appendChild(s);
+    } else {
+      dd.textContent = r[1];
+    }
+    row.appendChild(dt);
+    row.appendChild(dd);
+    dl.appendChild(row);
+  }
+  sec.appendChild(h);
+  sec.appendChild(dl);
+  el.appendChild(sec);
+}
+
+/** 侧栏里的一块记录 */
+function railLog(el, title, lines, emptyText) {
+  const sec = document.createElement("section");
+  sec.className = "block block-log";
+  const h = document.createElement("h2");
+  h.className = "block-label";
+  h.textContent = title;
+  const box = document.createElement("div");
+  box.className = "log";
+  if (!lines.length) {
+    const p = document.createElement("p");
+    p.textContent = emptyText;
+    box.appendChild(p);
+  } else {
+    lines.slice(-8).forEach(msg => {
+      const p = document.createElement("p");
+      p.textContent = msg;
+      box.appendChild(p);
+    });
+  }
+  sec.appendChild(h);
+  sec.appendChild(box);
+  el.appendChild(sec);
+}
+
+/** 牌组构成：攻击 / 技能 / 能力各几张 */
+function railDeckMix(el) {
+  const counts = { attack:0, skill:0, power:0 };
+  for (const id of run.deck) { const c = CARDS[id]; if (c) counts[c.type] = (counts[c.type] || 0) + 1; }
+  railRows(el, "牌组构成", [
+    ["攻击", counts.attack], ["技能", counts.skill], ["能力", counts.power],
+  ]);
+}
+
 /* ---------------- 异闻（事件） ---------------- */
 
 function renderEvent() {
   const panel = $("event-panel");
-  const node = run.map[run.nodeIndex];
-  if (atFire || run.battle || run.status !== "playing" || !node || node.type !== "event" || node.done) {
-    panel.classList.add("hidden"); return;
-  }
+  const node = eventNode();
+  if (!node) { panel.classList.add("hidden"); return; }
   panel.classList.remove("hidden");
   $("event-title").textContent = node.event.name;
   $("event-desc").textContent = `血量 ${run.hp}／${run.maxHp}，金币 ${run.gold}。你该如何抉择？`;
+
+  const rail = $("event-rail");
+  rail.innerHTML = "";
+  railRows(rail, "我方", [
+    ["血量", run.hp, "／" + run.maxHp],
+    ["金币", run.gold],
+    ["遗物", run.relics.length, " 件"],
+  ]);
+  railDeckMix(rail);
+  railLog(rail, "记录", run.log, "刚上路。");
 
   const opts = $("event-opts");
   opts.innerHTML = "";
@@ -509,7 +599,7 @@ function renderEvent() {
 
 function renderReward() {
   const panel = $("reward-panel");
-  if (!run.rewardCards.length && !run.rewardRelic) { panel.classList.add("hidden"); return; }
+  if (!hasReward()) { panel.classList.add("hidden"); return; }
   panel.classList.remove("hidden");
   const cards = $("reward-cards");
   cards.innerHTML = "";
@@ -529,6 +619,15 @@ function renderReward() {
   } else {
     $("reward-relic").textContent = "";
   }
+  const rail = $("reward-rail");
+  rail.innerHTML = "";
+  railRows(rail, "随身", [
+    ["牌组", run.deck.length, " 张"],
+    ["遗物", run.relics.length, " 件"],
+    ["血量", run.hp, "／" + run.maxHp],
+  ]);
+  railDeckMix(rail);
+  railLog(rail, "记录", run.log, "刚上路。");
 }
 
 /* ---------------- 篝火 ---------------- */
@@ -539,6 +638,15 @@ function renderCampfire() {
   panel.classList.remove("hidden");
   $("btn-campfire").disabled = run.gold < 50;
   $("btn-campfire").textContent = run.gold < 50 ? "歇息（需 50 金）" : "歇息（−50 金，+20 血）";
+  const rail = $("campfire-rail");
+  rail.innerHTML = "";
+  railRows(rail, "我方", [
+    ["血量", run.hp, "／" + run.maxHp],
+    ["金币", run.gold],
+    ["遗物", run.relics.length, " 件"],
+  ]);
+  railDeckMix(rail);
+  railLog(rail, "记录", run.log, "刚上路。");
 }
 
 /* ---------------- 结算 ---------------- */

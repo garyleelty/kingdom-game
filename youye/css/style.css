@@ -278,6 +278,12 @@ button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; 
 /* ---------- 战利品 ---------- */
 .hand-reward { flex-wrap: wrap; overflow: visible; }
 .relic-line { font-size: var(--fs-body); color: var(--qian); margin-top: 20px; }
+.fire-note {
+  font-size: var(--fs-body); color: var(--ink-2); line-height: 1.6;
+  max-width: 52ch; padding: 14px 16px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
 
 /* ---------- 按钮 ---------- */
 button {

@@ -151,7 +151,12 @@
           <p class="sub" id="event-desc"></p>
         </div>
       </div>
-      <ul class="choices" id="event-opts"></ul>
+      <div class="battle-grid">
+        <div class="battle-main">
+          <ul class="choices" id="event-opts"></ul>
+        </div>
+        <aside class="rail" id="event-rail"></aside>
+      </div>
     </section>
 
     <!-- 奖励 -->
@@ -162,8 +167,13 @@
           <p class="sub">选一张卡加入牌组</p>
         </div>
       </div>
-      <div class="hand hand-reward" id="reward-cards"></div>
-      <p class="relic-line" id="reward-relic"></p>
+      <div class="battle-grid">
+        <div class="battle-main">
+          <div class="hand hand-reward" id="reward-cards"></div>
+          <p class="relic-line" id="reward-relic"></p>
+        </div>
+        <aside class="rail" id="reward-rail"></aside>
+      </div>
     </section>
 
     <!-- 篝火 -->
@@ -177,6 +187,12 @@
           <button id="btn-campfire" class="primary">歇息（−50 金，+20 血）</button>
           <button id="btn-campfire-skip" class="ghost">继续赶路</button>
         </div>
+      </div>
+      <div class="battle-grid">
+        <div class="battle-main">
+          <p class="fire-note">火还旺着。歇一会儿要 50 金币，能换回 20 点血量。也可以什么都不做，直接上路。</p>
+        </div>
+        <aside class="rail" id="campfire-rail"></aside>
       </div>
     </section>
 

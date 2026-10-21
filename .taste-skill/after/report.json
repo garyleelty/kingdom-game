@@ -1,6 +1,6 @@
 {
  "url": "youye/index.html",
- "at": "2026-10-21T19:00:31.601Z",
+ "at": "2026-10-21T19:12:28.759Z",
  "allow": [
   "font-not-dealt"
  ],
@@ -12,7 +12,7 @@
    "screens": 2,
    "filled": [
     0.27,
-    0.2
+    0.21
    ],
    "motion": {
     "elements": 0,
@@ -90,12 +90,12 @@
      "families": [
       {
        "family": "PingFang SC",
-       "share": 0.77,
+       "share": 0.76,
        "mono": false
       },
       {
        "family": "Songti SC",
-       "share": 0.23,
+       "share": 0.24,
        "mono": false
       }
      ],
@@ -142,7 +142,7 @@
      "textColors": [
       {
        "color": "#5f5949",
-       "share": 0.6
+       "share": 0.59
       },
       {
        "color": "#1c1a16",
@@ -246,7 +246,7 @@
       "height": 478,
       "words": 35,
       "media": 0,
-      "middle": 528,
+      "middle": 514,
       "heading": {
        "text": "路段",
        "size": 13,
@@ -541,7 +541,7 @@
       },
       {
        "color": "#45403a",
-       "share": 0.1
+       "share": 0.09
       },
       {
        "color": "#ebe5d3",
@@ -1035,7 +1035,7 @@
       "height": 1090,
       "words": 35,
       "media": 0,
-      "middle": 140,
+      "middle": 126,
       "heading": {
        "text": "路段",
        "size": 13,
