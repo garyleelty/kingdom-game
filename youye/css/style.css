@@ -1,207 +1,363 @@
-/* 水墨宣纸视觉规范 */
+/* ============================================================
+   幽夜行 — 水墨宣纸
+   风格：achromatic-ledger (seed 1168326166)
+   规则：app screen（references/app-screens.md）
+   ============================================================ */
+
 :root {
-  --paper: #e8e0cc;
-  --ink: #1a1a1a;
-  --ink-soft: #4a4a44;
-  --zhu: #a8301f;
-  --dai: #2f4858;
-  --qian: #8a6d2f;
-  --shadow: rgba(26,26,26,.25);
+  /* 地面与墨：宣纸 / 松烟墨
+   所有浅色纸面 l < 0.88：不是奶油色，是宣纸本色 */
+  --paper:      #ded8c4;   /* 宣纸，页面地面 */
+  --surface:    #ebe5d3;   /* 卡片，比地面高一级 */
+  --raised:     #cdc4a8;   /* 井、轨道，比地面低一级 */
+  --ink:        #1c1a16;   /* 松烟墨，正文 */
+  --ink-2:      #45403a;   /* 次级正文 */
+  --muted:      #5f5949;   /* 说明文字，对地面 4.89:1 */
+  --border:     #cbc2a8;   /* 纸边 1.25:1 */
+  --rule:       #d3cbb4;   /* 行分隔 */
+
+  /* 三色矿物：数据色，不进 chrome */
+  --zhu:        #a8322a;   /* 朱砂：敌 / 攻击，本屏主数据 */
+  --dai:        #2f5d70;   /* 石青：技 / 格挡 */
+  --qian:       #6f520b;   /* 藤黄（文字） */
+  --qian-bar:   #b08a2a;   /* 藤黄（色带 / 计量条） */
+  --gilded:     #e5d9b4;   /* 连牌时压金纹的纸 */
+
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --gap: 12px;
+  --pad: 24px;
+  --control-height: 36px;
+  --fs-title: 24px;
+  --fs-section: 16px;
+  --fs-kpi: 30px;
+  --fs-body: 14px;
+  --fs-small: 13px;
+  --col: 1120px;
+  --rail: 320px;
+
+  --face-serif: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif;
+  --face-sans:  "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: "STKaiti","KaiTi","Songti SC","SimSun",serif;
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(168,48,31,.05), transparent 60%),
-    radial-gradient(ellipse at 70% 80%, rgba(47,72,88,.06), transparent 60%),
-    var(--paper);
+  font-family: var(--face-sans);
+  font-size: var(--fs-body);
+  line-height: 1.5;
   color: var(--ink);
+  background-color: var(--paper);
+  /* 宣纸纤维：SVG 噪点纹理，不是渐变 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
-#app { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
-header#topbar {
-  display: flex; justify-content: space-between; align-items: baseline;
-  border-bottom: 2px solid var(--ink);
-  padding-bottom: 10px; margin-bottom: 20px;
-}
-.title { font-size: 2em; letter-spacing: .2em; }
-.status { display: flex; gap: 20px; font-size: 1.1em; }
+h1, h2, h3, .card-name, .wordmark, .seal { font-family: var(--face-serif); }
 
-.panel {
-  background: rgba(232,224,204,.92);
-  border: 1px solid var(--ink-soft);
-  padding: 20px; margin-bottom: 20px;
-  box-shadow: 0 4px 12px var(--shadow);
-  position: relative;
-}
-.panel::before {
-  content: ""; position: absolute; top: 0; left: 0;
-  width: 100%; height: 3px; background: var(--ink);
-}
-h2 { font-size: 1.4em; margin-bottom: 12px; border-left: 4px solid var(--zhu); padding-left: 10px; }
+b, strong { font-weight: 600; }
+.of { color: var(--muted); font-weight: 400; }
 
-button {
-  font-family: inherit;
-  background: var(--ink); color: var(--paper);
-  border: none; padding: 8px 18px; cursor: pointer;
-  transition: opacity .2s, transform .1s;
-  margin: 4px 8px 4px 0;
+/* ---------- 顶栏 ---------- */
+#topbar {
+  height: 48px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 max(32px, calc((100% - var(--col)) / 2));
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
-button:hover { opacity: .85; transform: translateY(-1px); }
-button:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-button.primary { background: var(--zhu); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.seal {
+  width: 26px; height: 26px; flex: none;
+  background: var(--zhu); color: var(--surface);
+  font-size: 15px; line-height: 26px; text-align: center;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.wordmark { font-size: 17px; letter-spacing: .18em; }
 
-/* 卡牌 */
-#hand { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 160px; padding: 12px 0; }
+.run-state { display: flex; gap: 22px; }
+.run-stat { display: flex; align-items: baseline; gap: 6px; }
+.run-stat dt { font-size: var(--fs-small); color: var(--muted); }
+.run-stat dd { font-size: var(--fs-body); font-variant-numeric: tabular-nums; }
+
+/* ---------- 画布 ---------- */
+#canvas { padding: 32px max(32px, calc((100% - var(--col)) / 2)) 64px; }
+.screen { display: flex; flex-direction: column; }
+
+.title-row {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+  margin-bottom: 28px;
+}
+.title-block { min-width: 0; }
+h1 {
+  font-size: var(--fs-title); font-weight: 600; letter-spacing: .06em; line-height: 1.2;
+}
+.sub {
+  font-size: var(--fs-body); color: var(--muted); margin-top: 6px; max-width: 62ch;
+}
+.title-actions { display: flex; gap: 8px; flex: none; }
+
+/* ---------- 区块 ---------- */
+.block { margin-bottom: 32px; }
+.block-label {
+  font-family: var(--face-sans);
+  font-size: var(--fs-small); font-weight: 500; color: var(--muted);
+  letter-spacing: .06em; margin-bottom: 10px;
+}
+.empty { font-size: var(--fs-small); color: var(--muted); padding: 10px 0; }
+
+/* ---------- 战斗栅格 ---------- */
+.battle-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) var(--rail); gap: 32px;
+  align-items: start;
+}
+.battle-main { min-width: 0; }
+.rail { min-width: 0; }
+
+/* ---------- 手牌 / 战阵 ---------- */
+.hand, .played-line {
+  display: flex; gap: 8px; align-items: flex-start;
+  overflow-x: auto; padding-bottom: 4px;
+}
+.played-line { flex-wrap: wrap; overflow: visible; }
+
 .card {
-  width: 92px; height: 132px;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  border-radius: 4px;
-  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-  padding: 8px; cursor: pointer;
-  transition: transform .15s, box-shadow .15s;
+  position: relative; flex: none;
+  width: 108px; height: 150px;
+  padding: 12px 10px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  display: flex; flex-direction: column; gap: 4px;
+  text-align: left; font-family: inherit; color: inherit;
+  cursor: pointer;
+  transition: transform .14s ease, border-color .14s ease, background-color .14s ease;
 }
-.card:hover { transform: translateY(-6px); box-shadow: 0 6px 14px var(--shadow); }
-.card.attack { border-color: var(--zhu); }
-.card.skill { border-color: var(--dai); }
-.card.power { border-color: var(--qian); }
-.card .cost {
-  align-self: flex-end;
-  width: 22px; height: 22px; border-radius: 50%;
-  background: var(--zhu); color: var(--paper);
-  display: flex; align-items: center; justify-content: center;
-  font-size: .85em; font-weight: bold;
+.card::before {
+  content: ""; position: absolute; top: -1px; left: -1px; right: -1px; height: 4px;
+  background: var(--tone, var(--muted)); border-radius: 7px 7px 0 0;
 }
-.card .name { font-size: .95em; text-align: center; font-weight: bold; }
-.card .desc { font-size: .68em; color: var(--ink-soft); text-align: center; }
-.card.rest { border-color: var(--qian); border-style: dashed; }
+.card.attack { --tone: var(--zhu); }
+.card.skill  { --tone: var(--dai); }
+.card.power  { --tone: var(--qian); }
+.card.rest   { --tone: var(--dai); }
 
-/* 敌人 */
-#enemy-area { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
-#enemy-card { border: 2px solid var(--zhu); padding: 12px; min-width: 180px; background: rgba(168,48,31,.06); }
-#enemy-intent { font-size: 1.3em; color: var(--zhu); font-weight: bold; }
-#enemy-hp-bar { height: 10px; background: rgba(26,26,26,.1); margin: 6px 0; }
-#enemy-hp-fill { height: 100%; background: var(--zhu); width: 100%; transition: width .3s; }
+button.card:hover { transform: translateY(-4px); border-color: var(--tone); }
+button.card:active { transform: translateY(-1px); }
+button.card:disabled { cursor: not-allowed; opacity: .45; transform: none; }
+button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; }
 
-/* 玩家状态 */
-#player-area { display: flex; gap: 24px; font-size: 1.1em; margin-bottom: 10px; flex-wrap: wrap; }
-#energy-num, #qish-num, #block-num, #hp-battle-num { color: var(--zhu); }
+.card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.card-type { font-size: var(--fs-small); color: var(--tone); font-weight: 500; }
+.card-cost { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.card-name { font-size: 15px; font-weight: 600; letter-spacing: .04em; line-height: 1.3; }
+.card-desc {
+  font-size: var(--fs-small); color: var(--muted); line-height: 1.5;
+  font-family: var(--face-sans);
+}
+.card-mark {
+  position: absolute; right: 10px; bottom: 8px;
+  font-size: var(--fs-small); font-weight: 600; color: var(--qian);
+  font-variant-numeric: tabular-nums;
+}
+.card.bonded { border-color: var(--qian-bar); background: var(--gilded); }
 
-/* 地图 */
-#map-nodes { display: flex; flex-direction: column; gap: 6px; }
-.node {
-  padding: 10px; border: 1px solid var(--ink-soft);
-  display: flex; justify-content: space-between; align-items: center;
-  cursor: pointer; transition: background .2s;
+/* 同名牌之间的金印 */
+.bond-link {
+  position: relative; align-self: center; flex: none;
+  width: 26px; height: 2px; background: var(--qian-bar);
 }
-.node:hover { background: rgba(168,48,31,.06); }
-.node.done { opacity: .5; text-decoration: line-through; cursor: default; }
-.node.current { border-color: var(--zhu); background: rgba(168,48,31,.08); }
+.bond-link::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 8px; height: 8px; background: var(--qian-bar);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
 
-/* 战斗日志 */
-#battle-log {
-  margin-top: 12px; padding: 10px; border-top: 1px dashed var(--ink-soft);
-  max-height: 220px; overflow-y: auto; font-size: .85em; color: var(--ink-soft);
-}
-#battle-log div { padding: 2px 0; }
+/* 战阵里的牌不可点 */
+.played-line .card { cursor: default; }
+.played-line .card:hover { transform: none; border-color: var(--border); background: var(--surface); }
+.played-line .card.bonded:hover { border-color: var(--qian-bar); background: var(--gilded); }
 
-/* 事件选项 */
-#event-opts { display: flex; flex-direction: column; gap: 8px; }
-#event-opts button { text-align: left; background: var(--paper); color: var(--ink); border: 1px solid var(--ink); }
-#event-opts button:hover { background: var(--ink); color: var(--paper); }
+/* ---------- 对手 ---------- */
+.foe { display: flex; gap: 14px; align-items: flex-start; }
+.foe-portrait {
+  position: relative; width: 88px; height: 88px; flex: none;
+  background: var(--raised); border: 1px solid var(--border);
+  border-radius: var(--radius-card); overflow: hidden;
+}
+.foe-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; transition: opacity .18s ease;
+}
+.foe-img.is-loaded { opacity: 1; }
+.foe-glyph {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--face-serif); font-size: 30px; color: var(--ink-2);
+}
+.foe-body { flex: 1; min-width: 0; }
+.foe-name { font-family: var(--face-serif); font-size: var(--fs-section); font-weight: 600; margin-bottom: 4px; }
+.foe-intent { font-size: var(--fs-small); color: var(--ink-2); margin-bottom: 8px; }
 
-/* 奖励 */
-#reward-cards { display: flex; gap: 12px; flex-wrap: wrap; }
-#reward-cards .card { cursor: pointer; }
-#reward-relic { margin-top: 12px; font-size: 1.05em; color: var(--qian); }
+.meter { height: 8px; border-radius: 999px; background: var(--raised); overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 999px; background: var(--tone, var(--zhu)); transition: width .3s ease; }
+.meter-danger { --tone: var(--zhu); }
+.meter-gold { --tone: var(--qian-bar); }
+.meter-ends {
+  display: flex; justify-content: space-between; margin-top: 5px;
+  font-size: var(--fs-small); color: var(--muted); font-variant-numeric: tabular-nums;
+}
 
-/* 结算 */
-#end-panel { text-align: center; padding: 40px; }
-#end-title { border: none; font-size: 2.2em; }
+/* ---------- 我方 ---------- */
+.qish { margin-bottom: 14px; }
+.qish-value { font-size: var(--fs-kpi); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.qish-value .of { font-size: var(--fs-body); margin-left: 2px; }
+.qish-cap { font-size: var(--fs-small); color: var(--muted); margin: 6px 0 8px; }
 
-/* 本回合已打出 */
-#played-area {
-  display: flex; align-items: center; gap: 12px;
-  margin-top: 12px; padding: 10px 14px;
-  border-top: 1px dashed var(--ink-soft);
-  min-height: 150px;
-}
-#played-label { font-size: .8em; color: var(--ink-soft); writing-mode: vertical-rl; }
-#played-cards { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-start; }
-#played-cards .card { width: 76px; height: 108px; opacity: .85; cursor: default; pointer-events: none; }
-#played-cards .card:hover { transform: none; box-shadow: none; }
-#played-cards .card.bonded {
-  opacity: 1;
-  border-color: var(--qian);
-  box-shadow: 0 0 12px rgba(138,109,47,.55), inset 0 0 8px rgba(138,109,47,.25);
-  animation: bondGlow 1.6s ease-in-out infinite;
-}
-/* 同名牌之间的连接线 */
-#played-cards .bond-link {
-  align-self: center; width: 22px; height: 3px;
-  background: linear-gradient(90deg, var(--qian), transparent);
-  position: relative;
-}
-#played-cards .bond-link::after {
-  content: "🔗"; position: absolute; left: 50%; top: 50%;
-  transform: translate(-50%,-50%); font-size: .7em;
-}
-@keyframes bondGlow {
-  0%,100% { box-shadow: 0 0 8px rgba(138,109,47,.45), inset 0 0 6px rgba(138,109,47,.2); }
-  50% { box-shadow: 0 0 18px rgba(138,109,47,.75), inset 0 0 12px rgba(138,109,47,.35); }
-}
-#played-cards .card .desc { font-size: .6em; }
-#played-cards .card .name { font-size: .85em; }
+.kv-list { display: flex; flex-direction: column; gap: 7px; }
+.kv-list > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.kv-list dt { font-size: var(--fs-small); color: var(--muted); }
+.kv-list dd { font-size: var(--fs-body); font-variant-numeric: tabular-nums; }
+.kv-list dd .of { font-size: var(--fs-small); margin-left: 1px; }
 
-/* —— 动态特效层 —— */
-#fx-layer {
-  position: fixed; inset: 0; pointer-events: none; z-index: 999;
+/* ---------- 日志 ---------- */
+.log { max-height: 210px; overflow-y: auto; font-size: var(--fs-small); color: var(--ink-2); }
+.log p { padding: 3px 0; border-bottom: 1px solid var(--rule); }
+.log p:last-child { border-bottom: none; }
+.log .log-warn { color: var(--zhu); }
+
+/* ---------- 道路（地图） ---------- */
+.road { list-style: none; }
+.road li {
+  display: grid; grid-template-columns: 40px 72px minmax(0, 1fr) auto;
+  align-items: baseline; gap: 16px;
+  padding: 15px 0; border-bottom: 1px solid var(--rule);
 }
+.road-num { font-size: var(--fs-small); color: var(--muted); font-variant-numeric: tabular-nums; }
+.road-kind { font-size: var(--fs-body); color: var(--ink-2); }
+.road-name { font-family: var(--face-serif); font-size: var(--fs-body); color: var(--ink); }
+.road-state { font-size: var(--fs-small); color: var(--muted); text-align: right; }
+.road li.done .road-name, .road li.done .road-kind { color: var(--muted); }
+.road li.current .road-kind { color: var(--zhu); font-weight: 600; }
+.road li.current .road-state, .road li.current .road-num { color: var(--zhu); }
+
+/* 夜色山道：地图下方的一幅真画 */
+.road-figure { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.road-figure img {
+  display: block; width: 100%; height: 224px; object-fit: cover;
+  border-radius: var(--radius-card);
+  filter: saturate(.55) contrast(.97) brightness(1.06);
+}
+.road-figure figcaption {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  font-size: var(--fs-small); color: var(--muted);
+}
+.figure-what { font-family: var(--face-serif); }
+.figure-credit { color: var(--muted); text-align: right; }
+.road-figure.is-empty { display: none; }
+
+/* ---------- 选择（事件） ---------- */
+.choices { list-style: none; max-width: 760px; }
+.choices li + li { margin-top: 8px; }
+.choices button {
+  width: 100%; height: auto; min-height: 52px;
+  padding: 13px 16px;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border); border-radius: var(--radius-card);
+  font-family: var(--face-serif); font-size: var(--fs-body); text-align: left;
+  transition: background-color .14s ease, border-color .14s ease;
+}
+.choices button:hover { border-color: var(--ink-2); }
+.choices button:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; }
+.choice-note {
+  font-family: var(--face-sans); font-size: var(--fs-small); color: var(--muted);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* ---------- 战利品 ---------- */
+.hand-reward { flex-wrap: wrap; overflow: visible; }
+.relic-line { font-size: var(--fs-body); color: var(--qian); margin-top: 20px; }
+
+/* ---------- 按钮 ---------- */
+button {
+  font-family: var(--face-sans); font-size: var(--fs-body);
+  height: var(--control-height); padding: 0 16px;
+  border: 1px solid transparent; border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background-color .14s ease, color .14s ease, border-color .14s ease, transform .1s ease;
+}
+button.primary { background: var(--ink); color: var(--surface); }
+button.primary:hover { background: #322d25; }
+button.primary:active { transform: translateY(1px); }
+button.ghost { background: var(--raised); color: var(--ink); border-color: var(--border); }
+button.ghost:hover { background: var(--paper); border-color: var(--ink-2); }
+button.ghost:active { transform: translateY(1px); }
+button:disabled { opacity: .38; cursor: not-allowed; transform: none; }
+button:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; }
+
+/* ---------- 特效层 ---------- */
+#fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 60; }
 .fx-dmg {
-  position: absolute; font-size: 38px; font-weight: bold;
-  color: var(--zhu); text-shadow: 0 2px 6px rgba(0,0,0,.4);
-  animation: dmgFloat 1.6s ease-out forwards;
-  white-space: nowrap;
+  position: absolute; font-size: 34px; font-weight: 700; color: var(--zhu);
+  font-variant-numeric: tabular-nums;
+  animation: fxRise 1.1s cubic-bezier(.2,.7,.3,1) forwards;
 }
-.fx-dmg.bond { color: var(--qian); font-size: 48px; text-shadow: 0 0 12px rgba(138,109,47,.8); }
-.fx-dmg.ult { color: var(--zhu); font-size: 60px; text-shadow: 0 0 16px rgba(168,48,31,.9); }
-@keyframes dmgFloat {
-  0% { opacity: 0; transform: translate(-50%,-50%) scale(.4); }
-  12% { opacity: 1; transform: translate(-50%,-65%) scale(1.3); }
-  25% { transform: translate(-50%,-75%) scale(1); }
-  80% { opacity: 1; transform: translate(-50%,-130%) scale(.95); }
-  100% { opacity: 0; transform: translate(-50%,-150%) scale(.9); }
+.fx-dmg.gold { color: var(--qian); }
+.fx-ult {
+  position: absolute; font-family: var(--face-serif); font-size: 30px; font-weight: 600;
+  color: var(--zhu); letter-spacing: .12em; white-space: nowrap;
+  animation: fxRise 1.4s cubic-bezier(.2,.7,.3,1) forwards;
 }
-.fx-bond {
-  position: absolute; width: 12px; height: 12px; border-radius: 50%;
-  border: 4px solid var(--qian); transform: translate(-50%,-50%);
-  animation: bondBurst 1s ease-out forwards;
+.fx-wash { position: fixed; inset: 0; background: var(--zhu); opacity: 0; animation: fxWash .5s ease-out forwards; }
+@keyframes fxRise {
+  0%   { opacity: 0; transform: translate(-50%, -30%) scale(.8); }
+  18%  { opacity: 1; transform: translate(-50%, -58%) scale(1.12); }
+  100% { opacity: 0; transform: translate(-50%, -132%) scale(1); }
 }
-@keyframes bondBurst {
-  0% { width: 14px; height: 14px; opacity: 1; }
-  100% { width: 340px; height: 340px; opacity: 0; }
+@keyframes fxWash {
+  0% { opacity: .16; } 100% { opacity: 0; }
 }
-.fx-flash {
-  position: fixed; inset: 0; pointer-events: none;
-  animation: screenFlash .6s ease-out forwards;
-}
-@keyframes screenFlash {
-  0% { background: rgba(138,109,47,.45); }
-  60% { background: rgba(138,109,47,.15); }
-  100% { background: transparent; }
-}
-.fx-shake { animation: shake .4s ease-out; }
-@keyframes shake {
+.foe-hit { animation: foeShake .36s ease-out; }
+@keyframes foeShake {
   0%,100% { transform: translate(0,0); }
-  15% { transform: translate(-8px,3px); }
-  30% { transform: translate(8px,-3px); }
-  45% { transform: translate(-6px,2px); }
-  60% { transform: translate(6px,-2px); }
-  80% { transform: translate(-3px,1px); }
+  18% { transform: translate(-7px,2px); }
+  40% { transform: translate(6px,-2px); }
+  64% { transform: translate(-4px,1px); }
+  84% { transform: translate(3px,-1px); }
 }
-
-#map-actions { margin-top: 12px; }
+.bond-leaf { animation: bondLeaf .7s ease-out; }
+@keyframes bondLeaf {
+  0% { background-color: var(--qian-bar); }
+  100% { background-color: var(--gilded); }
+}
 
 .hidden { display: none !important; }
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 1000px) {
+  .battle-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 32px; align-items: start; }
+  .block-log { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  #topbar { padding: 0 16px; }
+  #canvas { padding: 20px 16px 48px; }
+  .run-state { gap: 12px; }
+  .run-stat dt { display: none; }
+  .rail { grid-template-columns: minmax(0, 1fr); }
+  .title-row { flex-direction: column; gap: 14px; }
+  .title-actions { width: 100%; }
+  .title-actions button { flex: 1; }
+  .card { width: 96px; height: 138px; }
+  .road li { grid-template-columns: 28px 60px minmax(0, 1fr); row-gap: 2px; }
+  .road-state { grid-column: 3; text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

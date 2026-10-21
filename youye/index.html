@@ -8,85 +8,194 @@
 </head>
 <body>
 <div id="app">
+
   <header id="topbar">
-    <h1 class="title">幽夜行</h1>
-    <div class="status">
-      <span id="hp-display">🩸 80/80</span>
-      <span id="gold-display">🪙 0</span>
-      <span id="node-display">节点 0/8</span>
+    <div class="brand">
+      <span class="seal" aria-hidden="true">幽</span>
+      <span class="wordmark">幽夜行</span>
     </div>
+    <dl class="run-state">
+      <div class="run-stat"><dt>血量</dt><dd><b id="hp-display">80</b><span class="of" id="hp-max">/80</span></dd></div>
+      <div class="run-stat"><dt>金币</dt><dd id="gold-display">0</dd></div>
+      <div class="run-stat"><dt>妖雾之路</dt><dd><b id="node-display">1</b><span class="of" id="node-max">/8</span></dd></div>
+    </dl>
   </header>
 
-  <main id="main">
+  <main id="canvas">
+
     <!-- 地图 -->
-    <section id="map-panel" class="panel hidden">
-      <h2>妖雾之路</h2>
-      <div id="map-nodes"></div>
-      <div id="map-desc"></div>
-      <div id="map-actions"></div>
+    <section id="map-panel" class="screen hidden">
+      <div class="title-row">
+        <div class="title-block">
+          <h1>妖雾之路</h1>
+          <p class="sub" id="map-sub"></p>
+        </div>
+        <div class="title-actions" id="map-actions"></div>
+      </div>
+      <div class="battle-grid">
+        <div class="battle-main">
+          <section class="block">
+            <h2 class="block-label">路段</h2>
+            <ol class="road" id="map-nodes"></ol>
+          </section>
+        </div>
+        <aside class="rail">
+          <section class="block">
+            <h2 class="block-label">随身</h2>
+            <dl class="kv-list">
+              <div><dt>牌组</dt><dd><b id="map-deck">12</b><span class="of">张</span></dd></div>
+              <div><dt>遗物</dt><dd><b id="map-relics">0</b><span class="of">件</span></dd></div>
+              <div><dt>气势上限</dt><dd id="map-qishcap">6</dd></div>
+            </dl>
+          </section>
+          <section class="block">
+            <h2 class="block-label">牌组构成</h2>
+            <dl class="kv-list" id="map-deck-mix"></dl>
+          </section>
+          <section class="block block-log">
+            <h2 class="block-label">记录</h2>
+            <div class="log" id="map-log"></div>
+          </section>
+        </aside>
+      </div>
+      <figure class="road-figure" id="road-figure">
+        <img id="road-figure-img" src="img/road-night.jpg" alt="夜色中的山道">
+        <figcaption>
+          <span class="figure-what">夜色中的山道。前路未卜。</span>
+          <span class="figure-credit" id="road-figure-credit"></span>
+        </figcaption>
+      </figure>
     </section>
 
     <!-- 战斗 -->
-    <section id="battle-panel" class="panel hidden">
-      <div id="enemy-area">
-        <div id="enemy-intent"></div>
-        <div id="enemy-card">
-          <span id="enemy-name"></span>
-          <div id="enemy-hp-bar"><div id="enemy-hp-fill"></div></div>
-          <span id="enemy-hp-text"></span>
+    <section id="battle-panel" class="screen hidden">
+      <div class="title-row">
+        <div class="title-block">
+          <h1 id="battle-title">游魂</h1>
+          <p class="sub" id="battle-sub"></p>
+        </div>
+        <div class="title-actions">
+          <button id="btn-end-turn" class="primary">结束回合</button>
+          <button id="btn-discard" class="ghost">弃一张牌</button>
         </div>
       </div>
-      <div id="player-area">
-        <div id="energy-display">灵气 <b id="energy-num">3</b>/3</div>
-        <div id="qish-display">气势 <b id="qish-num">0</b>/6</div>
-        <div id="block-display">格挡 <b id="block-num">0</b></div>
-        <div id="hp-battle">血量 <b id="hp-battle-num">80</b></div>
-      </div>
-      <div id="hand"></div>
-      <div id="played-area">
-        <div id="played-label">本回合已打出</div>
-        <div id="played-cards"></div>
-      </div>
-      <div id="battle-actions">
-        <button id="btn-end-turn" class="primary">结束回合 ▶</button>
-        <button id="btn-discard">弃一张牌</button>
+
+      <div class="battle-grid">
+        <div class="battle-main">
+
+          <section class="block">
+            <h2 class="block-label">战阵</h2>
+            <div class="played-line" id="played-cards"></div>
+            <p class="empty" id="played-empty">本回合尚未出牌</p>
+          </section>
+
+          <section class="block block-hand">
+            <h2 class="block-label">手牌</h2>
+            <div class="hand" id="hand"></div>
+            <p class="empty" id="hand-empty">手牌已空，结束回合。</p>
+          </section>
+
+        </div>
+
+        <aside class="rail">
+
+          <section class="block">
+            <h2 class="block-label">对手</h2>
+            <div class="foe">
+              <div class="foe-portrait" id="enemy-portrait"></div>
+              <div class="foe-body">
+                <p class="foe-intent" id="enemy-intent"></p>
+                <div class="meter meter-danger"><div class="meter-fill" id="enemy-hp-fill"></div></div>
+                <p class="meter-ends"><span>血量</span><span id="enemy-hp-text"></span></p>
+              </div>
+            </div>
+          </section>
+
+          <section class="block">
+            <h2 class="block-label">我方</h2>
+            <div class="qish">
+              <p class="qish-value"><b id="qish-num">0</b><span class="of">/6</span></p>
+              <p class="qish-cap">气势 · 攒满发动一剑霜寒</p>
+              <div class="meter meter-gold"><div class="meter-fill" id="qish-fill"></div></div>
+            </div>
+            <dl class="kv-list">
+              <div><dt>灵气</dt><dd><b id="energy-num">3</b><span class="of">/3</span></dd></div>
+              <div><dt>格挡</dt><dd id="block-num">0</dd></div>
+              <div><dt>血量</dt><dd id="hp-battle-num">80</dd></div>
+            </dl>
+          </section>
+
+          <section class="block">
+            <h2 class="block-label">牌堆</h2>
+            <dl class="kv-list">
+              <div><dt>抽牌堆</dt><dd id="deck-count">0</dd></div>
+              <div><dt>弃牌堆</dt><dd id="discard-count">0</dd></div>
+              <div><dt>遗物</dt><dd id="relic-count">0</dd></div>
+            </dl>
+          </section>
+
+          <section class="block block-log">
+            <h2 class="block-label">日志</h2>
+            <div class="log" id="battle-log"></div>
+          </section>
+
+        </aside>
       </div>
     </section>
 
     <!-- 事件 -->
-    <section id="event-panel" class="panel hidden">
-      <h2 id="event-title"></h2>
-      <p id="event-desc"></p>
-      <div id="event-opts"></div>
+    <section id="event-panel" class="screen hidden">
+      <div class="title-row">
+        <div class="title-block">
+          <h1 id="event-title"></h1>
+          <p class="sub" id="event-desc"></p>
+        </div>
+      </div>
+      <ul class="choices" id="event-opts"></ul>
     </section>
 
     <!-- 奖励 -->
-    <section id="reward-panel" class="panel hidden">
-      <h2 id="reward-title">战利品</h2>
-      <div id="reward-cards"></div>
-      <div id="reward-relic"></div>
+    <section id="reward-panel" class="screen hidden">
+      <div class="title-row">
+        <div class="title-block">
+          <h1>战利品</h1>
+          <p class="sub">选一张卡加入牌组</p>
+        </div>
+      </div>
+      <div class="hand hand-reward" id="reward-cards"></div>
+      <p class="relic-line" id="reward-relic"></p>
     </section>
 
     <!-- 篝火 -->
-    <section id="campfire-panel" class="panel hidden">
-      <h2>🔥 篝火</h2>
-      <p>休息片刻，花 50 金币回 20 血。</p>
-      <button id="btn-campfire" class="primary">休息（−50 金，+20 血）</button>
-      <button id="btn-campfire-skip">继续赶路</button>
+    <section id="campfire-panel" class="screen hidden">
+      <div class="title-row">
+        <div class="title-block">
+          <h1>篝火</h1>
+          <p class="sub">夜路太长，火边能歇一会儿。花 50 金币换 20 点血量。</p>
+        </div>
+        <div class="title-actions">
+          <button id="btn-campfire" class="primary">歇息（−50 金，+20 血）</button>
+          <button id="btn-campfire-skip" class="ghost">继续赶路</button>
+        </div>
+      </div>
     </section>
 
     <!-- 结算 -->
-    <section id="end-panel" class="panel hidden">
-      <h2 id="end-title"></h2>
-      <p id="end-desc"></p>
-      <button id="btn-restart" class="primary">再来一局</button>
+    <section id="end-panel" class="screen hidden">
+      <div class="title-row">
+        <div class="title-block">
+          <h1 id="end-title"></h1>
+          <p class="sub" id="end-desc"></p>
+        </div>
+        <div class="title-actions">
+          <button id="btn-restart" class="primary">再来一局</button>
+        </div>
+      </div>
     </section>
 
-    <!-- 战斗日志 -->
-    <div id="battle-log"></div>
   </main>
-<div id="fx-layer"></div>
 </div>
+<div id="fx-layer" aria-hidden="true"></div>
 <script src="js/cards.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/run.js"></script>

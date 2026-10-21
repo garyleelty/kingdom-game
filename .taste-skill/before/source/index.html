@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>幽夜行 · 卡牌构筑 Roguelike</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <h1 class="title">幽夜行</h1>
+    <div class="status">
+      <span id="hp-display">🩸 80/80</span>
+      <span id="gold-display">🪙 0</span>
+      <span id="node-display">节点 0/8</span>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 地图 -->
+    <section id="map-panel" class="panel hidden">
+      <h2>妖雾之路</h2>
+      <div id="map-nodes"></div>
+      <div id="map-desc"></div>
+      <div id="map-actions"></div>
+    </section>
+
+    <!-- 战斗 -->
+    <section id="battle-panel" class="panel hidden">
+      <div id="enemy-area">
+        <div id="enemy-intent"></div>
+        <div id="enemy-card">
+          <span id="enemy-name"></span>
+          <div id="enemy-hp-bar"><div id="enemy-hp-fill"></div></div>
+          <span id="enemy-hp-text"></span>
+        </div>
+      </div>
+      <div id="player-area">
+        <div id="energy-display">灵气 <b id="energy-num">3</b>/3</div>
+        <div id="qish-display">气势 <b id="qish-num">0</b>/6</div>
+        <div id="block-display">格挡 <b id="block-num">0</b></div>
+        <div id="hp-battle">血量 <b id="hp-battle-num">80</b></div>
+      </div>
+      <div id="hand"></div>
+      <div id="played-area">
+        <div id="played-label">本回合已打出</div>
+        <div id="played-cards"></div>
+      </div>
+      <div id="battle-actions">
+        <button id="btn-end-turn" class="primary">结束回合 ▶</button>
+        <button id="btn-discard">弃一张牌</button>
+      </div>
+    </section>
+
+    <!-- 事件 -->
+    <section id="event-panel" class="panel hidden">
+      <h2 id="event-title"></h2>
+      <p id="event-desc"></p>
+      <div id="event-opts"></div>
+    </section>
+
+    <!-- 奖励 -->
+    <section id="reward-panel" class="panel hidden">
+      <h2 id="reward-title">战利品</h2>
+      <div id="reward-cards"></div>
+      <div id="reward-relic"></div>
+    </section>
+
+    <!-- 篝火 -->
+    <section id="campfire-panel" class="panel hidden">
+      <h2>🔥 篝火</h2>
+      <p>休息片刻，花 50 金币回 20 血。</p>
+      <button id="btn-campfire" class="primary">休息（−50 金，+20 血）</button>
+      <button id="btn-campfire-skip">继续赶路</button>
+    </section>
+
+    <!-- 结算 -->
+    <section id="end-panel" class="panel hidden">
+      <h2 id="end-title"></h2>
+      <p id="end-desc"></p>
+      <button id="btn-restart" class="primary">再来一局</button>
+    </section>
+
+    <!-- 战斗日志 -->
+    <div id="battle-log"></div>
+  </main>
+<div id="fx-layer"></div>
+</div>
+<script src="js/cards.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/run.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

@@ -100,6 +100,7 @@ function newRun(seed) {
     rewardRelic: null,
     buffNextBattle: null,
     log: [],
+    fireUsed: false,
     firstBattleDone: false,
     battleCount: 0,
   };
