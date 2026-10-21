@@ -1,6 +1,6 @@
 {
  "url": "youye/index.html",
- "at": "2026-10-21T19:33:28.906Z",
+ "at": "2026-10-21T19:37:03.812Z",
  "allow": [
   "font-not-dealt"
  ],
@@ -90,12 +90,12 @@
      "families": [
       {
        "family": "PingFang SC",
-       "share": 0.77,
+       "share": 0.78,
        "mono": false
       },
       {
        "family": "Songti SC",
-       "share": 0.23,
+       "share": 0.22,
        "mono": false
       }
      ],
@@ -142,11 +142,11 @@
      "textColors": [
       {
        "color": "#5f5949",
-       "share": 0.58
+       "share": 0.59
       },
       {
        "color": "#1c1a16",
-       "share": 0.27
+       "share": 0.26
       },
       {
        "color": "#45403a",
@@ -246,7 +246,7 @@
       "height": 478,
       "words": 35,
       "media": 0,
-      "middle": 514,
+      "middle": 528,
       "heading": {
        "text": "路段",
        "size": 13,
@@ -783,7 +783,7 @@
    "load": "load",
    "screens": 2,
    "filled": [
-    0.26,
+    0.27,
     0.41
    ],
    "motion": {
@@ -884,12 +884,12 @@
      "families": [
       {
        "family": "PingFang SC",
-       "share": 0.78,
+       "share": 0.77,
        "mono": false
       },
       {
        "family": "Songti SC",
-       "share": 0.22,
+       "share": 0.23,
        "mono": false
       }
      ],
@@ -1035,7 +1035,7 @@
       "height": 922,
       "words": 35,
       "media": 0,
-      "middle": 162,
+      "middle": 148,
       "heading": {
        "text": "路段",
        "size": 13,

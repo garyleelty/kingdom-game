@@ -401,38 +401,37 @@ function cardMarkup(b, cardId, opts) {
           <span class="card-desc">${cardDescParts(card)}</span>${mark}`;
 }
 
-function cardDesc(card) {
-  const parts = [];
-  if (card.dmg) parts.push(`${card.dmg} 伤害${card.hits > 1 ? " ×" + card.hits : ""}`);
-  if (card.block) parts.push(`格挡 ${card.block}`);
-  if (card.qish) parts.push(`气势 +${card.qish}`);
-  if (card.draw) parts.push(`抽 ${card.draw} 张`);
-  if (card.pierce) parts.push("破甲");
-  if (card.counter) parts.push(`反伤 ${card.counter}`);
-  if (card.discard) parts.push(`弃 ${card.discard} 张`);
-  if (card.reshuffle) parts.push("重洗手牌");
-  if (card.copyLastAttack) parts.push("复制上次攻击");
-  if (card.skipIntent) parts.push(`跳过敌人 ${card.skipIntent} 回合`);
-  if (card.selfDmgNext) parts.push(`本回合受伤 +${card.selfDmgNext}`);
+/** 卡面说明：分组，每组里再切几段短的。
+ *  短的才不会被折断，宽的才不会被挤出卡面。 */
+function cardDescGroups(card) {
+  const g = [];
+  if (card.dmg) g.push([`${card.dmg} 伤害${card.hits > 1 ? "×" + card.hits : ""}`]);
+  if (card.block) g.push([`格挡 ${card.block}`]);
+  if (card.qish) g.push([`气势 +${card.qish}`]);
+  if (card.draw) g.push([`抽 ${card.draw} 张`]);
+  if (card.pierce) g.push(["破甲"]);
+  if (card.counter) g.push([`反伤 ${card.counter}`]);
+  if (card.discard) g.push([`弃 ${card.discard} 张`]);
+  if (card.reshuffle) g.push(["重洗手牌"]);
+  if (card.copyLastAttack) g.push(["复制", "上次攻击"]);
+  if (card.skipIntent) g.push([`跳过 ${card.skipIntent} 回合`]);
+  if (card.selfDmgNext) g.push(["本回合", `受伤 +${card.selfDmgNext}`]);
   if (card.onTurnStart) {
     const e = card.onTurnStart;
-    const bits = [];
-    if (e.qi) bits.push(`灵气 +${e.qi}`);
-    if (e.qish) bits.push(`气势 +${e.qish}`);
-    if (e.block) bits.push(`格挡 +${e.block}`);
-    if (bits.length) parts.push("每回合 " + bits.join(" "));
+    if (e.qi) g.push(["每回合", `灵气 +${e.qi}`]);
+    if (e.qish) g.push(["每回合", `气势 +${e.qish}`]);
+    if (e.block) g.push(["每回合", `格挡 +${e.block}`]);
   }
-  if (card.bond) parts.push("同名牌连发 ×2");
-  return parts.join(" · ") || "无效果";
+  if (card.bond) g.push(["同名牌", "×2"]);
+  return g.length ? g : [["无效果"]];
 }
 
-/** 卡面说明：每条短语不许从中间断开 */
+/** 短语之间不断开，组与组之间用间隔点隔开 */
 function cardDescParts(card) {
-  const parts = cardDesc(card).split(" · ");
   const out = [];
-  parts.forEach((p, i) => {
-    if (i > 0) out.push('<span class="sep">·</span>');
-    out.push(`<span>${p}</span>`);
+  cardDescGroups(card).forEach((grp, gi) => {
+    if (gi > 0) out.push('<span class="sep">·</span>');
+    out.push('<span class="grp">' + grp.map(t => `<span>${t}</span>`).join("") + "</span>");
   });
   return out.join("");
 }

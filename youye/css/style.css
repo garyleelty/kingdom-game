@@ -162,6 +162,7 @@ button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; 
   display: flex; flex-wrap: wrap; gap: 0 5px;
 }
 .card-desc span { white-space: nowrap; }
+.card-desc .grp { display: inline-flex; }
 .card-desc .sep { color: var(--muted); }
 .card-mark {
   position: absolute; right: 10px; bottom: 8px;
