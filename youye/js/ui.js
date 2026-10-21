@@ -282,6 +282,7 @@ function renderHand(b) {
   emptyEl.classList.toggle("hidden", b.hand.length > 0 || b.status !== "playing");
 
   for (const cardId of b.hand) {
+    if (cardId !== "__rest__" && !CARDS[cardId]) continue;   // 认不出的牌不占位
     const btn = document.createElement("button");
     btn.className = "card " + cardClass(cardId);
     btn.dataset.card = cardId;
