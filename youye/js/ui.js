@@ -347,6 +347,7 @@ function renderPlayed(b) {
   area.innerHTML = "";
   const played = b.playedThisTurn || [];
   emptyEl.classList.toggle("hidden", played.length > 0);
+  area.classList.toggle("is-empty", played.length === 0);
   if (!played.length) return;
 
   const newIdx = played.length - 1;
@@ -397,7 +398,7 @@ function cardMarkup(b, cardId, opts) {
   const mark = o.bonded ? `<span class="card-mark">×2</span>` : "";
   return `<span class="card-top"><span class="card-type">${typeLabel}</span><span class="card-cost">${cost}</span></span>
           <span class="card-name">${card.name}</span>
-          <span class="card-desc">${cardDesc(card)}</span>${mark}`;
+          <span class="card-desc">${cardDescParts(card)}</span>${mark}`;
 }
 
 function cardDesc(card) {
@@ -423,6 +424,17 @@ function cardDesc(card) {
   }
   if (card.bond) parts.push("同名牌连发 ×2");
   return parts.join(" · ") || "无效果";
+}
+
+/** 卡面说明：每条短语不许从中间断开 */
+function cardDescParts(card) {
+  const parts = cardDesc(card).split(" · ");
+  const out = [];
+  parts.forEach((p, i) => {
+    if (i > 0) out.push('<span class="sep">·</span>');
+    out.push(`<span>${p}</span>`);
+  });
+  return out.join("");
 }
 
 /* ---------------- 特效 ---------------- */
@@ -572,7 +584,7 @@ function renderEvent() {
     btn.textContent = opt.label;
     const notes = [];
     if (opt.cost && opt.cost.gold) notes.push("−" + opt.cost.gold + " 金");
-    if (opt.hp) notes.push("−" + opt.hp + " 血");
+    if (opt.hp) notes.push("−" + Math.abs(opt.hp) + " 血");
     if (opt.gain && opt.gain.gold) notes.push("+" + opt.gain.gold + " 金");
     if (opt.gain && opt.gain.hp) notes.push("+" + opt.gain.hp + " 血");
     if (opt.gain && opt.gain.relic) notes.push("得遗物");
@@ -637,8 +649,23 @@ function renderCampfire() {
   const panel = $("campfire-panel");
   if (!atFire) { panel.classList.add("hidden"); return; }
   panel.classList.remove("hidden");
-  $("btn-campfire").disabled = run.gold < 50;
-  $("btn-campfire").textContent = run.gold < 50 ? "歇息（需 50 金）" : "歇息（−50 金，+20 血）";
+  const canPay = run.gold >= 50;
+  const rest = $("btn-campfire");
+  const skip = $("btn-campfire-skip");
+  rest.disabled = !canPay;
+  rest.textContent = canPay ? "歇息（−50 金，+20 血）" : "歇息（还差 " + (50 - run.gold) + " 金）";
+  // 钱不够时，别让那颗按不了的按钮占着主位
+  rest.classList.toggle("is-primary-now", canPay);
+  skip.classList.toggle("is-primary-now", !canPay);
+  skip.classList.toggle("primary", !canPay);
+  skip.classList.toggle("ghost", canPay);
+  // 把代价说清楚：满血时歇息就是白花钱
+  const healed = Math.min(20, run.maxHp - run.hp);
+  $("fire-note").textContent = canPay
+    ? (healed > 0
+        ? `火还旺着。歇一会儿能换回 ${healed} 点血量，代价是 50 金币。也可以什么都不做，直接上路。`
+        : "火还旺着，但你的血已经满了。歇息只能白花 50 金币，换不回一点血。直接上路更划算。")
+    : `火还旺着，可你只有 ${run.gold} 金币，歇息要 50。直接上路吧。`;
   const rail = $("campfire-rail");
   rail.innerHTML = "";
   railRows(rail, "我方", [
@@ -659,8 +686,45 @@ function renderEnd() {
   const win = run.status === "win";
   $("end-title").textContent = win ? "斩开生路" : "妖雾吞噬";
   $("end-desc").textContent = win
-    ? `你斩开了妖雾，重见人间。历经 ${run.battleCount} 场战斗，收集 ${run.relics.length} 件遗物，牌组 ${run.deck.length} 张。`
-    : `妖雾漫过山门，你倒在最后一夜。历经 ${run.battleCount} 场战斗，收集 ${run.relics.length} 件遗物，牌组 ${run.deck.length} 张。下一次，也许能走得更远。`;
+    ? `你斩开了妖雾，重见人间。这一趟走过 ${run.nodeIndex} 段路，历经 ${run.battleCount} 场战斗。`
+    : `妖雾漫过山门，你倒在第 ${run.nodeIndex + 1} 段路。这一趟历经 ${run.battleCount} 场战斗。下一次，也许能走得更远。`;
+
+  // 这一趟捡到的遗物
+  const list = $("end-relics");
+  list.innerHTML = "";
+  if (!run.relics.length) {
+    const li = document.createElement("li");
+    const b = document.createElement("b");
+    b.textContent = "什么也没有";
+    const s = document.createElement("span");
+    s.textContent = "这一趟没捡到遗物。";
+    li.appendChild(b); li.appendChild(s);
+    list.appendChild(li);
+  } else {
+    for (const id of run.relics) {
+      const r = RELICS[id];
+      if (!r) continue;
+      const li = document.createElement("li");
+      const b = document.createElement("b");
+      b.textContent = r.name;
+      const s = document.createElement("span");
+      s.textContent = r.desc;
+      li.appendChild(b); li.appendChild(s);
+      list.appendChild(li);
+    }
+  }
+
+  const rail = $("end-rail");
+  rail.innerHTML = "";
+  railRows(rail, "这一趟", [
+    ["走过的路", run.nodeIndex, " 段"],
+    ["打过的仗", run.battleCount, " 场"],
+    ["遗物", run.relics.length, " 件"],
+    ["牌组", run.deck.length, " 张"],
+    ["血量", run.hp, "／" + run.maxHp],
+  ]);
+  railDeckMix(rail);
+  railLog(rail, "记录", run.log, "什么也没有发生。");
 }
 
 /* ---------------- 日志 ---------------- */

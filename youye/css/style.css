@@ -119,8 +119,12 @@ h1 {
 .hand, .played-line {
   display: flex; gap: 8px; align-items: flex-start;
   overflow-x: auto; padding-bottom: 4px;
+  scrollbar-width: none;          /* 手牌横向可滚，但不要一根丑陋的滚动条 */
 }
-.played-line { flex-wrap: wrap; overflow: visible; }
+.hand::-webkit-scrollbar, .played-line::-webkit-scrollbar { display: none; }
+.played-line { flex-wrap: wrap; overflow: visible; min-height: 150px; align-content: flex-start; }
+.played-line.is-empty { min-height: 0; }
+.played-empty { display: flex; align-items: center; height: 150px; }
 
 .card {
   position: relative; flex: none;
@@ -155,7 +159,10 @@ button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; 
 .card-desc {
   font-size: var(--fs-small); color: var(--muted); line-height: 1.5;
   font-family: var(--face-sans);
+  display: flex; flex-wrap: wrap; gap: 0 5px;
 }
+.card-desc span { white-space: nowrap; }
+.card-desc .sep { color: var(--muted); }
 .card-mark {
   position: absolute; right: 10px; bottom: 8px;
   font-size: var(--fs-small); font-weight: 600; color: var(--qian);
@@ -204,9 +211,10 @@ button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; 
 .meter-danger { --tone: var(--zhu); }
 .meter-gold { --tone: var(--qian-bar); }
 .meter-ends {
-  display: flex; justify-content: space-between; margin-top: 5px;
+  display: flex; gap: 8px; margin-top: 5px;
   font-size: var(--fs-small); color: var(--muted); font-variant-numeric: tabular-nums;
 }
+.meter-ends span:last-child { color: var(--ink-2); }
 
 /* ---------- 我方 ---------- */
 .qish { margin-bottom: 14px; }
@@ -214,10 +222,13 @@ button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; 
 .qish-value .of { font-size: var(--fs-body); margin-left: 2px; }
 .qish-cap { font-size: var(--fs-small); color: var(--muted); margin: 6px 0 8px; }
 
-.kv-list { display: flex; flex-direction: column; gap: 7px; }
-.kv-list > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.kv-list { display: flex; flex-direction: column; gap: 8px; }
+.kv-list > div {
+  display: grid; grid-template-columns: 72px 60px;
+  gap: 10px; align-items: baseline;
+}
 .kv-list dt { font-size: var(--fs-small); color: var(--muted); }
-.kv-list dd { font-size: var(--fs-body); font-variant-numeric: tabular-nums; }
+.kv-list dd { font-size: var(--fs-body); font-variant-numeric: tabular-nums; text-align: right; }
 .kv-list dd .of { font-size: var(--fs-small); margin-left: 1px; }
 
 /* ---------- 日志 ---------- */
@@ -244,7 +255,8 @@ button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; 
 /* 夜色山道：地图下方的一幅真画 */
 .road-figure { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
 .road-figure img {
-  display: block; width: 100%; height: 224px; object-fit: cover;
+  display: block; width: 100%; height: 300px; object-fit: cover;
+  object-position: center 30%;
   border-radius: var(--radius-card);
   filter: saturate(.55) contrast(.97) brightness(1.06);
 }
@@ -278,6 +290,13 @@ button.card:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; 
 /* ---------- 战利品 ---------- */
 .hand-reward { flex-wrap: wrap; overflow: visible; }
 .relic-line { font-size: var(--fs-body); color: var(--qian); margin-top: 20px; }
+.relic-list { list-style: none; margin-top: 20px; max-width: 520px; }
+.relic-list li {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 11px 0; border-bottom: 1px solid var(--rule);
+}
+.relic-list b { font-family: var(--face-serif); font-weight: 600; flex: none; }
+.relic-list span { font-size: var(--fs-small); color: var(--muted); }
 .fire-note {
   font-size: var(--fs-body); color: var(--ink-2); line-height: 1.6;
   max-width: 52ch; padding: 14px 16px;
@@ -297,6 +316,7 @@ button.primary { background: var(--ink); color: var(--surface); }
 button.primary:hover { background: #322d25; }
 button.primary:active { transform: translateY(1px); }
 button.ghost { background: var(--raised); color: var(--ink); border-color: var(--border); }
+button.is-primary-now { background: var(--ink); color: var(--surface); border-color: transparent; }
 button.ghost:hover { background: var(--paper); border-color: var(--ink-2); }
 button.ghost:active { transform: translateY(1px); }
 button:disabled { opacity: .38; cursor: not-allowed; transform: none; }
@@ -349,15 +369,16 @@ button:focus-visible { outline: 2px solid var(--zhu); outline-offset: 2px; }
 @media (max-width: 640px) {
   #topbar { padding: 0 16px; }
   #canvas { padding: 20px 16px 48px; }
-  .run-state { gap: 12px; }
-  .run-stat dt { display: none; }
+  .run-state { gap: 14px; }
+  .run-stat { gap: 4px; }
+  .run-stat dt { font-size: var(--fs-small); }
   .rail { grid-template-columns: minmax(0, 1fr); }
   .title-row { flex-direction: column; gap: 14px; }
   .title-actions { width: 100%; }
   .title-actions button { flex: 1; }
-  .card { width: 96px; height: 138px; }
-  .road li { grid-template-columns: 28px 60px minmax(0, 1fr); row-gap: 2px; }
-  .road-state { grid-column: 3; text-align: left; }
+  .card { width: 96px; height: 150px; }
+  .road li { grid-template-columns: 24px 56px minmax(0, 1fr) auto; gap: 10px; }
+  .road-state { grid-column: auto; text-align: right; }
 }
 
 @media (prefers-reduced-motion: reduce) {

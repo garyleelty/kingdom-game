@@ -165,7 +165,7 @@ function playCard(s, cardId) {
   if (base.bond && s.playedThisTurn.includes(cardId)) {
     bondMult = 2;
     bondTriggered = true;
-    pushLog(s, `🔗 同名牌连发！【${base.name}】效果翻倍`);
+    pushLog(s, `同名牌连发！【${base.name}】效果翻倍`);
   }
   s.playedThisTurn.push(cardId);
   if (bondTriggered && !s.bonded.includes(cardId)) s.bonded.push(cardId);
